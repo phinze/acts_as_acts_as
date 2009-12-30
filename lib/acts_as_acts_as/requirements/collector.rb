@@ -36,4 +36,13 @@ class ActsAsActsAs::Requirements::Collector
   def all_requirements
     all.inject({}) { |h, c| h.merge(c.requirements) }
   end
+
+  class Context
+    [:require_methods, :require_columns, :define_methods, :define_class_methods].each do |x|
+      define_method x { |*args| [x, args] }
+    end
+  end
+
+  def collect(&block)
+  end
 end

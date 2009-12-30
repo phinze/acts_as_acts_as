@@ -21,10 +21,6 @@ module ActsAsActsAs::GroupMacros
   #     )
   #   end
   def acts_as(acts_as_method, &block)
-    [:require_methods, :require_columns, :define_methods, :define_class_methods].each do |x|
-      self.class.send(:define_method, x) { |*args| [x, args] }
-    end
-
     # Now use our new object to let the block build up requirements
     collector = ActsAsActsAs::RequirementsCollector.new
     yield collector

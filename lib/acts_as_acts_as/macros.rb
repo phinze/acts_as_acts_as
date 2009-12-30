@@ -6,14 +6,17 @@ module ActsAsActsAs::Macros
   # 
   # ==== Parameters
   #  * <tt>:class_name</tt> - if you want the class to be assigned a constant,
-  #    specify it as a string here, note that if you want the constant to be
-  #    namespaced you should do the nested const_sets yourself and leave this
-  #    option blank
+  #                           specify it as a string here, note that if you want
+  #                           the constant to be namespaced you should do the
+  #                           nested const_sets yourself and leave this option
+  #                           blank
   #  * <tt>:superclass</tt> - superclass for the new model, defaults to
-  #    ActiveRecord::Base
-  #  * <tt>:columns</tt> - array of tuples as expected by the
-  #    <tt>active_record_tableless</tt> plugin
-  #  * <tt>:methods</tt> - 
+  #                           ActiveRecord::Base, as you might expect
+  #  * <tt>:columns</tt>    - collection of tuples as expected by the
+  #                           <tt>active_record_tableless</tt> plugin to be
+  #                           added as columns to the  created model
+  #  * <tt>:methods</tt>    - collection of symbols to define by attr_accessor
+  #                           in the created model
   def tableless_model(options)
     options    = options.dup
     class_name = options.delete(:class_name) || nil
@@ -34,7 +37,8 @@ module ActsAsActsAs::Macros
     return newclass
   end
 
-  # A model with a table that exists only for the duration of the block
+  # A model with a table that exists only for the duration of the block, or if
+  # no block is passed, until <tt>drop_temp_model</tt> is called
   def temp_model(model_opts, &block)
     table_name = "temp_table_#{'%04d' % rand(1000)}"
     ActiveRecord::Base.connection.create_table(table_name) do |t|
@@ -60,7 +64,6 @@ module ActsAsActsAs::Macros
     drop_temp_model(newclass)
   end
 
-  # yeah - this is lame, but I like having both
   def drop_temp_model(tmodel)
     ActiveRecord::Base.connection.drop_table(tmodel.table_name)
   end
