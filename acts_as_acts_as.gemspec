@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{acts_as_acts_as}
-  s.version = "0.0.1"
+  s.version = "0.0.2"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["phinze"]
@@ -24,6 +24,7 @@ Gem::Specification.new do |s|
      "README.rdoc",
      "Rakefile",
      "VERSION",
+     "acts_as_acts_as.gemspec",
      "lib/acts_as_acts_as.rb",
      "lib/acts_as_acts_as/group_macros.rb",
      "lib/acts_as_acts_as/macros.rb",
