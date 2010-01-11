@@ -5,8 +5,9 @@ begin
   require 'jeweler'
   Jeweler::Tasks.new do |gem|
     gem.name = "acts_as_acts_as"
-    gem.summary = %Q{TODO: one-line summary of your gem}
-    gem.description = %Q{TODO: longer description of your gem}
+    gem.summary = %Q{Testing harness for acts_as plugins}
+    gem.description = %Q{Generate temporary tables and models, specify defined
+      and required methods, all sorts of fun stuff!}
     gem.email = "paul.t.hinze@gmail.com"
     gem.homepage = "http://github.com/phinze/acts_as_acts_as"
     gem.authors = ["phinze"]
