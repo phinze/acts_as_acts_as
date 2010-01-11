@@ -40,7 +40,9 @@ module ActsAsActsAs::Macros
   # A model with a table that exists only for the duration of the block, or if
   # no block is passed, until <tt>drop_temp_model</tt> is called
   def temp_model(model_opts, &block)
-    table_name = "temp_table_#{'%04d' % rand(1000)}"
+    t = Time.now
+    uid = t.to_i.to_s + t.usec.to_s
+    table_name = "temp_table_#{uid}"
     ActiveRecord::Base.connection.create_table(table_name) do |t|
       model_opts[:columns].each do |name, type|
         t.send(type, name)
@@ -48,6 +50,7 @@ module ActsAsActsAs::Macros
     end
 
     newclass = Class.new(ActiveRecord::Base)
+    Object.const_set(table_name.camelize, newclass)
     newclass.set_table_name table_name
     newclass.reset_column_information
 
@@ -64,7 +67,20 @@ module ActsAsActsAs::Macros
     drop_temp_model(newclass)
   end
 
+  def temp_versioned_model(model_opts, &block)
+    model = temp_model(model_opts)
+    silence_stream(STDERR) { model.acts_as_ris_versioned(model_opts[:aav_options] || {}) }
+    model.update_versioned_table
+
+    return model unless block_given?
+    yield model
+    drop_temp_model(model)
+  end
+
+
   def drop_temp_model(tmodel)
     ActiveRecord::Base.connection.drop_table(tmodel.table_name)
+    ActiveRecord::Base.connection.drop_table(tmodel.versioned_table_name) if tmodel.respond_to?(:versioned_table_name)
   end
+
 end
