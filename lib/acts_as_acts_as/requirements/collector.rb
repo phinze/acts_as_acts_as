@@ -37,9 +37,9 @@ class ActsAsActsAs::Requirements::Collector
     all.inject({}) { |h, c| h.merge(c.requirements) }
   end
 
-  class Context
+  module Context
     [:require_methods, :require_columns, :define_methods, :define_class_methods].each do |x|
-      define_method x { |*args| [x, args] }
+      define_method(x) { |*args| [x, args] }
     end
   end
 
