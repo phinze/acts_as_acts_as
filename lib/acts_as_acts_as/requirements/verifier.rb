@@ -35,6 +35,28 @@ class ActsAsActsAs::Requirements::Verifier
     end
   end
 
+  def require_class_methods(options, reqs, *methods)
+    verifier       = self
+    acts_as_method = @acts_as_method
+    describe 'required methods' do
+      methods.each do |meth|
+        it "#{meth} must be defined in class" do
+          mod = verifier.tableless_model(
+            :columns => reqs[:require_columns]
+          )
+          reqs[:require_class_methods].reject { |rm| rm == meth }.each do |method|
+            mod.class_eval %{
+              def self.#{method}
+                true
+              end
+            }
+          end
+          lambda { mod.send(acts_as_method, options) }.should raise_error(/#{meth}/)
+        end
+      end
+    end
+  end
+
   def require_columns(options, reqs, *columns)
     verifier       = self
     acts_as_method = @acts_as_method

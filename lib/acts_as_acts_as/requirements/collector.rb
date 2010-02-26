@@ -38,7 +38,7 @@ class ActsAsActsAs::Requirements::Collector
   end
 
   module Context
-    [:require_methods, :require_columns, :define_methods, :define_class_methods].each do |x|
+    [:require_methods, :require_class_methods, :require_columns, :define_methods, :define_class_methods].each do |x|
       define_method(x) { |*args| [x, args] }
     end
   end
