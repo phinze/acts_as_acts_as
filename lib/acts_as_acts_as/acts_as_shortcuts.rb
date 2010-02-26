@@ -1,6 +1,6 @@
 module ActsAsActsAs
   module ActsAsShortcuts
-    def require_methods(*method_list, options = {})
+    def require_methods(*method_list)
       method_list.each do |required_method| 
         unless instance_methods.include?(required_method.to_s) 
           raise "Model #{self.to_s} must define #{required_method}"
@@ -8,7 +8,7 @@ module ActsAsActsAs
       end
     end
 
-    def require_class_methods(*method_list, options = {})
+    def require_class_methods(*method_list)
       method_list.each do |required_method| 
         unless methods.include?(required_method.to_s) 
           raise "Model #{self.to_s} must define class method #{required_method}"
