@@ -1,5 +1,15 @@
 module ActsAsActsAs
   module ActsAsShortcuts
+
+    def require_parameters(options, *options_list)
+      missing_options = (options_list - options.keys) # would convert to_s here, but people may not convert which would just hide bugs
+      if missing_options.blank?
+        true
+      else
+        raise "Model #{self.to_s} must pass options that include #{missing_options.inspect}"
+      end
+    end
+
     def require_methods(*method_list)
       method_list.each do |required_method| 
         unless instance_methods.include?(required_method.to_s) 

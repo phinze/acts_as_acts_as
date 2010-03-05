@@ -57,6 +57,26 @@ class ActsAsActsAs::Requirements::Verifier
     end
   end
 
+  def require_parameters(options, reqs, *parameters)
+    verifier       = self
+    acts_as_method = @acts_as_method
+    describe 'required methods' do
+      parameters.each do |parameter|
+        it "#{parameter} must be passed in the #{acts_as_method} options hash " do
+          mod = verifier.tableless_model(
+            :columns => reqs[:require_columns]
+          )
+
+          passing_options = parameters.inject({}) {|h, param| h[param] = :foo ; h}
+          passing_options.merge!(options)
+          passing_options.delete(parameter)
+
+          lambda { mod.send(acts_as_method, passing_options) }.should raise_error(/#{parameter}/)
+        end
+      end
+    end
+  end
+
   def require_columns(options, reqs, *columns)
     verifier       = self
     acts_as_method = @acts_as_method

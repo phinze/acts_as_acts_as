@@ -44,8 +44,10 @@ module ActsAsActsAs::Macros
     uid = t.to_i.to_s + t.usec.to_s
     table_name = "temp_table_#{uid}"
     ActiveRecord::Base.connection.create_table(table_name) do |t|
-      model_opts[:columns].each do |name, type|
-        t.send(type, name)
+      model_opts[:columns].each do |args|
+        (name, type, options) = args
+        options = {} if options.nil?
+        t.send(type, name, options)
       end
     end
 
@@ -54,9 +56,11 @@ module ActsAsActsAs::Macros
     newclass.set_table_name table_name
     newclass.reset_column_information
 
-    newclass.class_eval do
-      model_opts[:methods].each do |m|
-        attr_accessor m
+    if model_opts[:methods]
+      newclass.class_eval do
+        model_opts[:methods].each do |m|
+          attr_accessor m
+        end
       end
     end
 
