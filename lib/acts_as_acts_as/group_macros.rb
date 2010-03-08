@@ -22,7 +22,7 @@ module ActsAsActsAs::GroupMacros
   #       [:quantity,             :integer]
   #     )
   #   end
-  def acts_as(acts_as_method, &block)
+  def acts_as(acts_as_method, options = {}, &block)
     # Now use our new object to let the block build up requirements
     collector = ActsAsActsAs::Requirements::Collector.new
     verifier = ActsAsActsAs::Requirements::Verifier.new(acts_as_method)
@@ -37,14 +37,18 @@ module ActsAsActsAs::GroupMacros
     end
 
     before(:all) do
-      ActsAsBillable::BillableObjects.classes_using_billing = []
+      begin
+        ActsAsBillable::BillableObjects.classes_using_billing = []
+      rescue NameError => e
+        # ignoring so that we can move along without ActsAsBillable
+      end
 
       @valid_model = tableless_model(
         :columns => collector.all_requirements[:require_columns],
         :methods => collector.all_requirements[:require_methods]
       )
 
-      @valid_model.send(acts_as_method)
+      @valid_model.send(acts_as_method, options)
 
       @model_opts = {
         :columns => collector.all_requirements[:require_columns],
@@ -52,7 +56,7 @@ module ActsAsActsAs::GroupMacros
       }
 
       @valid_model_with_table = temp_model(@model_opts)
-      @valid_model_with_table.send(acts_as_method)
+      @valid_model_with_table.send(acts_as_method, options)
     end
 
     after(:all) do
